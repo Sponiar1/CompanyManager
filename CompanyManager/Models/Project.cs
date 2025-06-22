@@ -24,7 +24,7 @@ namespace CompanyManager.Models
 
         [Required(ErrorMessage = "Project boss is required.")]
         [ForeignKey("Boss")]
-        public int BossId { get; set; }
+        public int Id_Boss { get; set; }
         public Employee? Boss { get; set; }
 
         public ICollection<Department> Departments { get; set; } = new List<Department>();

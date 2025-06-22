@@ -25,7 +25,7 @@ namespace CompanyManager.Models
 
         [Required(ErrorMessage = "Department boss is required.")]
         [ForeignKey("Boss")]
-        public int BossId { get; set; }
+        public int Id_Boss { get; set; }
         public Employee? Boss { get; set; }
     }
 }

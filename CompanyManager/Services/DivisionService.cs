@@ -13,15 +13,15 @@ namespace CompanyManager.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Models.Division>> GetAllDivisionsAsync()
+        public async Task<IEnumerable<Division>> GetAllDivisionsAsync()
         {
             return await _context.Divisions.ToListAsync();
         }
-        public async Task<Models.Division> GetDivisionByIdAsync(int id)
+        public async Task<Division> GetDivisionByIdAsync(int id)
         {
             return await _context.Divisions.FindAsync(id);
         }
-        public async Task<Models.Division> AddDivisionAsync(Models.Division division)
+        public async Task<Division> AddDivisionAsync(Division division)
         {
             var boss = await _context.Employees.FindAsync(division.Id_Boss);
             if (boss == null)
@@ -44,12 +44,12 @@ namespace CompanyManager.Services
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
         }
-        public async Task<Models.Division> UpdateDivisionAsync(int id, Models.Division division)
+        public async Task<Division> UpdateDivisionAsync(int id, Division division)
         {
             var original = await _context.Divisions.AsNoTracking().FirstOrDefaultAsync(d => d.Id_Division == id);
             if (original == null)
             {
-                return null;
+                throw new Exception("Database update failed: Division does not exist.");
             }
             var boss = await _context.Employees.FindAsync(division.Id_Boss);
             if (boss == null)

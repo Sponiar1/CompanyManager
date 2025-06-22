@@ -11,6 +11,8 @@ builder.Services.AddDbContext<CompanyContext>(options =>
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<DivisionService>();
+builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddScoped<ProjectService>();
 builder.Services.AddControllers();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

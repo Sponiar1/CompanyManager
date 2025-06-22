@@ -51,7 +51,8 @@ namespace CompanyManager.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDivision(int id, [FromBody] DivisionDTO updatedDivision)
         {
-           if (updatedDivision == null) {
+           if (updatedDivision == null) 
+            {
                 return BadRequest("Division data is required");
             }
             Division div = mapDivision(updatedDivision, id);

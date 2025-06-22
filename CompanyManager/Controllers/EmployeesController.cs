@@ -66,10 +66,19 @@ namespace CompanyManager.Controllers
                 return BadRequest(ModelState);
             }
 
-            var employee = await _employeeService.UpdateEmployeeAsync(id, emp);
-            return employee == null
-                ? NotFound($"Employee with ID {id} not found.")
-                : Ok(employee);
+            try
+            {
+                var employee = await _employeeService.UpdateEmployeeAsync(id, emp);
+                if (employee == null)
+                {
+                    return NotFound($"Employee with ID {id} not found.");
+                }
+                return Ok(employee);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         // POST: api/Employees
