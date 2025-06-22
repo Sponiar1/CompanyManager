@@ -1,8 +1,8 @@
-﻿using Company.Data;
-using Company.Models;
+﻿using CompanyManager.Data;
+using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Company.Services
+namespace CompanyManager.Services
 {
     public class EmployeeService
     {

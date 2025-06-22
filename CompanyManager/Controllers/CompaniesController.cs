@@ -1,10 +1,10 @@
-﻿using Company.Mappers;
-using Company.Mappers.Validator;
-using Company.Models;
-using Company.Services;
+﻿using CompanyManager.Mappers;
+using CompanyManager.Mappers.Validator;
+using CompanyManager.Models;
+using CompanyManager.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Company.Controllers
+namespace CompanyManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace Company.Controllers
 
         // GET: api/Companies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company.Models.Company>>> GetCompanies()
+        public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
             var companies = await _companyService.GetAllCompaniesAsync();
             return Ok(companies);
@@ -27,7 +27,7 @@ namespace Company.Controllers
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Company.Models.Company>> GetCompany(int id)
+        public async Task<ActionResult<Company>> GetCompany(int id)
         {
             var company = await _companyService.GetCompanyByIdAsync(id);
             if (company == null)
@@ -47,7 +47,7 @@ namespace Company.Controllers
             {
                 return BadRequest("Company data is required");
             }
-            Company.Models.Company com = mapCompany(updatedCompany, id);
+            Company com = mapCompany(updatedCompany, id);
             if (!DataValidator.Validate(com, out var results))
             {
                 foreach (var error in results)
@@ -79,13 +79,13 @@ namespace Company.Controllers
         // POST: api/Companies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Company.Models.Company>> PostCompany([FromBody] CompanyDTO newCompany)
+        public async Task<ActionResult<Company>> PostCompany([FromBody] CompanyDTO newCompany)
         {
             if (newCompany == null)
             {
                 return BadRequest("Company data is required");
             }
-            Company.Models.Company com = mapCompany(newCompany);
+           Company com = mapCompany(newCompany);
             if (!DataValidator.Validate(com, out var results))
             {
                 foreach (var error in results)
@@ -126,9 +126,9 @@ namespace Company.Controllers
             return Ok(deleted);
         }
 
-        private Company.Models.Company mapCompany(CompanyDTO company, int? id = null)
+        private Company mapCompany(CompanyDTO company, int? id = null)
         {
-            return new Company.Models.Company
+            return new Company
             {
                 Id_Company = id ?? 0,
                 Com_Name = company.Com_Name,

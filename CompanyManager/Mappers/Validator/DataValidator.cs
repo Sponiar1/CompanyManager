@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Company.Mappers.Validator
+namespace CompanyManager.Mappers.Validator
 {
     public static class DataValidator
     {

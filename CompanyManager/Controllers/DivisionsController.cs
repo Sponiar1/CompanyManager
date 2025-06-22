@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Company.Data;
-using Company.Models;
-using Company.Services;
-using Company.Mappers;
-using Company.Mappers.Validator;
+using CompanyManager.Data;
+using CompanyManager.Models;
+using CompanyManager.Services;
+using CompanyManager.Mappers;
+using CompanyManager.Mappers.Validator;
 
-namespace Company.Controllers
+namespace CompanyManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

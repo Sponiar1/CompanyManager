@@ -1,5 +1,5 @@
-using Company.Data;
-using Company.Services;
+using CompanyManager.Data;
+using CompanyManager.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

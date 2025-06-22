@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Company.Data;
-using Company.Models;
+using CompanyManager.Data;
+using CompanyManager.Models;
 
-namespace Company.Controllers
+namespace CompanyManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Company.Models;
+using CompanyManager.Models;
 
-namespace Company.Data
+namespace CompanyManager.Data
 {
     public class CompanyContext :DbContext
     {
@@ -9,7 +9,7 @@ namespace Company.Data
         public DbSet<Division> Divisions { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Department> Departments { get; set; }
-        public DbSet<Company.Models.Company> Companies { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public CompanyContext(DbContextOptions<CompanyContext> options) : base(options)
         {
 

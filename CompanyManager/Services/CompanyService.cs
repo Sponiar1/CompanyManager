@@ -1,8 +1,8 @@
-﻿using Company.Data;
-using Company.Models;
+﻿using CompanyManager.Data;
+using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Company.Services
+namespace CompanyManager.Services
 {
     public class CompanyService
     {
@@ -12,15 +12,15 @@ namespace Company.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Company.Models.Company>> GetAllCompaniesAsync()
+        public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
         {
             return await _context.Companies.ToListAsync();
         }
-        public async Task<Company.Models.Company> GetCompanyByIdAsync(int id)
+        public async Task<Company> GetCompanyByIdAsync(int id)
         {
             return await _context.Companies.FindAsync(id);
         }
-        public async Task<Company.Models.Company> AddCompanyAsync(Company.Models.Company company)
+        public async Task<Company> AddCompanyAsync(Company company)
         {
             var boss = await _context.Employees.FindAsync(company.Id_Boss);
             if (boss == null)
@@ -38,7 +38,7 @@ namespace Company.Services
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
         }
-        public async Task<Company.Models.Company> UpdateCompanyAsync(int id, Company.Models.Company company)
+        public async Task<Company> UpdateCompanyAsync(int id, Company company)
         {
             var original = await _context.Companies.AsNoTracking().FirstOrDefaultAsync(c => c.Id_Company == id);
             if (original == null)

@@ -1,4 +1,4 @@
-﻿namespace Company.Services
+﻿namespace CompanyManager.Services
 {
     public class DepartmentService
     {

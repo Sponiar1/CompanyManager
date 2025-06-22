@@ -1,4 +1,4 @@
-﻿namespace Company.Mappers
+﻿namespace CompanyManager.Mappers
 {
     public class CompanyDTO
     {

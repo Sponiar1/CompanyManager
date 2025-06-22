@@ -1,8 +1,8 @@
-﻿using Company.Models;
+﻿using CompanyManager.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Company.Mappers
+namespace CompanyManager.Mappers
 {
     public class DivisionDTO
     {

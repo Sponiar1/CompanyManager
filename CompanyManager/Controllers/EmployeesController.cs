@@ -1,11 +1,11 @@
-﻿using Company.Mappers;
-using Company.Mappers.Validator;
-using Company.Models;
-using Company.Services;
+﻿using CompanyManager.Mappers;
+using CompanyManager.Mappers.Validator;
+using CompanyManager.Models;
+using CompanyManager.Services;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Company.Controllers
+namespace CompanyManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
