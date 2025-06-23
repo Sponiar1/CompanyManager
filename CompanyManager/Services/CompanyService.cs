@@ -42,7 +42,7 @@ namespace CompanyManager.Services
             {
                 throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
-            company.Boss = null;
+            //company.Boss = null;
             try
             {
                 _context.Companies.Add(company);
@@ -85,13 +85,20 @@ namespace CompanyManager.Services
             {
                 return false;
             }
-            if(!company.Divisions.IsNullOrEmpty())
+            if (!company.Divisions.IsNullOrEmpty())
             {
                 throw new InvalidOperationException("Company is associated with division");
             }
-            _context.Companies.Remove(company);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Companies.Remove(company);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

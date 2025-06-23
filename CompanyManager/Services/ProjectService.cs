@@ -14,23 +14,37 @@ namespace CompanyManager.Services
         }
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            return await _context.Projects.ToListAsync();
+            try
+            {
+                return await _context.Projects.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load projects from database: " + ex.Message);
+            }
         }
         public async Task<Project> GetProjectByIdAsync(int id)
         {
-            return await _context.Projects.FindAsync(id);
+            try
+            {
+                return await _context.Projects.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load project from database: " + ex.Message);
+            }
         }
         public async Task<Project> AddProjectAsync(Project project)
         {
             var boss = await _context.Employees.FindAsync(project.Id_Boss);
             if (boss == null)
             {
-                throw new Exception("Database update failed: Employee (Boss) does not exist.");
+                throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
             var division = await _context.Divisions.FindAsync(project.Id_Division);
             if (division == null)
             {
-                throw new Exception("Database update failed: Division does not exist.");
+                throw new ArgumentException("Database update failed: Division does not exist.");
             }
             try
             {
@@ -38,7 +52,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return project;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
@@ -48,17 +62,17 @@ namespace CompanyManager.Services
             var original = await _context.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id_Project == id);
             if (original == null)
             {
-                throw new Exception("Database update failed: Project does not exist.");
+                throw new ArgumentException("Database update failed: Project does not exist.");
             }
             var boss = await _context.Employees.FindAsync(project.Id_Boss);
             if (boss == null)
             {
-                throw new Exception("Database update failed: Employee (Boss) does not exist.");
+                throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
             var division = await _context.Divisions.FindAsync(project.Id_Division);
             if (division == null)
             {
-                throw new Exception("Database update failed: Division does not exist.");
+                throw new ArgumentException("Database update failed: Division does not exist.");
             }
             try
             {
@@ -66,7 +80,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return project;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
@@ -83,9 +97,16 @@ namespace CompanyManager.Services
             {
                 throw new InvalidOperationException("Project has associated departments and cannot be deleted.");
             }
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Projects.Remove(project);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

@@ -24,6 +24,10 @@ namespace CompanyManager.Controllers
             try
             {
                 var company = await _companyService.GetAllCompaniesAsync();
+                if (company == null || !company.Any())
+                {
+                    return NotFound("No companies found.");
+                }
                 return Ok(company);
             }
             catch (Exception ex)
@@ -92,7 +96,7 @@ namespace CompanyManager.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500,new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -136,7 +140,7 @@ namespace CompanyManager.Controllers
                 return StatusCode(500, new { Message = ex.Message });
             }
         }
-
+        //TODO
         // DELETE: api/Companies/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCompany(int id)
@@ -147,10 +151,7 @@ namespace CompanyManager.Controllers
                 {
                     return NotFound($"Company does not exists.");
                 }
-            }
-            catch (InvalidOperationException ex)
-            {
-                return StatusCode(500, ex.Message);
+                return Ok(deleted);
             }
             catch (Exception ex)
             {

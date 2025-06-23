@@ -83,9 +83,16 @@ namespace CompanyManager.Services
             {
                 throw new InvalidOperationException("Employee is manager of a district.");
             }
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+            }
         }
     }
 }

@@ -28,26 +28,45 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Division>>> GetDivisions()
         {
-            var divisions = await _divisionService.GetAllDivisionsAsync();
-            return Ok(divisions);
+            try
+            {
+                var divisions = await _divisionService.GetAllDivisionsAsync();
+                if (divisions == null || !divisions.Any())
+                {
+                    return NotFound("No divisions found.");
+                }
+                return Ok(divisions);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET: api/Divisions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Division>> GetDivision(int id)
         {
-            var division = await _divisionService.GetDivisionByIdAsync(id);
-
-            if (division == null)
+            if (id <= 0)
             {
-                return NotFound($"Division with ID {id} not found.");
+                return BadRequest("Invalid division ID.");
             }
-
-            return Ok(division);
+            try
+            {
+                var division = await _divisionService.GetDivisionByIdAsync(id);
+                if (division == null)
+                {
+                    return NotFound($"Division was not found.");
+                }
+                return Ok(division);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT: api/Divisions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDivision(int id, [FromBody] DivisionDTO updatedDivision)
         {
@@ -76,18 +95,21 @@ namespace CompanyManager.Controllers
                 var division = await _divisionService.UpdateDivisionAsync(id, div);
                 if (division == null)
                 {
-                    return NotFound($"Division with ID {id} not found.");
+                    return NotFound($"Division was not found.");
                 }
                 return Ok(division);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
         // POST: api/Divisions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Division>> PostDivision([FromBody] DivisionDTO newDivision)
         {
@@ -115,11 +137,15 @@ namespace CompanyManager.Controllers
             try
             {
                 var division = await _divisionService.AddDivisionAsync(div);
-                return Ok(division);
+                return CreatedAtAction(nameof(GetDivision), new { id = division.Id_Division }, division);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -127,12 +153,23 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDivision(int id)
         {
-            var deleted = await _divisionService.DeleteDivisionAsync(id);
-            if (!deleted)
+            if (id <= 0)
             {
-                return NotFound($"Division with ID {id} not found.");
+                return BadRequest("Invalid division ID.");
             }
-            return Ok(deleted);
+            try
+            {
+                var deleted = await _divisionService.DeleteDivisionAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Division was not found.");
+                }
+                return Ok(deleted);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         private Division mapDivision(DivisionDTO divisionDTO, int? id = null)

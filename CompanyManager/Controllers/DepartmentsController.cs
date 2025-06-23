@@ -21,24 +21,38 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
-            var departments = await _departmentService.GetAllDepartmentsAsync();
-            if (departments == null || !departments.Any())
+            try
             {
-                return NotFound("No departments found.");
+                var departments = await _departmentService.GetAllDepartmentsAsync();
+                if (departments == null || !departments.Any())
+                {
+                    return NotFound("No departments found.");
+                }
+                return Ok(departments);
             }
-            return Ok(departments);
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET: api/Departments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Department>> GetDepartment(int id)
         {
-            var department = await _departmentService.GetDepartmentByIdAsync(id);
-            if (department == null)
+            try
             {
-                return NotFound($"Department with ID {id} not found.");
+                var department = await _departmentService.GetDepartmentByIdAsync(id);
+                if (department == null)
+                {
+                    return NotFound($"Department with ID {id} not found.");
+                }
+                return Ok(department);
             }
-            return Ok(department);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT: api/Departments/5
@@ -69,11 +83,19 @@ namespace CompanyManager.Controllers
             try
             {
                 var updated = await _departmentService.UpdateDepartmentAsync(id, dep);
+                if(updated == null)
+                {
+                    return NotFound($"Department was not found.");
+                }
                 return Ok(updated);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -105,11 +127,15 @@ namespace CompanyManager.Controllers
             try
             {
                 var department = await _departmentService.AddDepartmentAsync(dep);
-                return Ok(department);
+                return CreatedAtAction(nameof(GetDepartment), new { id = department.Id_Department }, department);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -117,12 +143,19 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var deleted = await _departmentService.DeleteDepartmentAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound($"Department with ID {id} not found.");
+                var deleted = await _departmentService.DeleteDepartmentAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Department was not found.");
+                }
+                return Ok(deleted);
             }
-            return Ok(deleted);
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         private Department mapDepartment(DepartmentDTO departmentDTO, int? id = null)

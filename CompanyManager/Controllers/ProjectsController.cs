@@ -28,28 +28,40 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-            var projects = await _projectService.GetAllProjectsAsync();
-            if (projects == null || !projects.Any())
+            try
             {
-                return NotFound("No projects found.");
+                var projects = await _projectService.GetAllProjectsAsync();
+                if (projects == null || !projects.Any())
+                {
+                    return NotFound("No projects found.");
+                }
+                return Ok(projects);
             }
-            return Ok(projects);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
-            if (project == null)
+            try
             {
-                return NotFound($"Project with ID {id} not found.");
+                var project = await _projectService.GetProjectByIdAsync(id);
+                if (project == null)
+                {
+                    return NotFound($"Project was not found.");
+                }
+                return Ok(project);
             }
-            return Ok(project);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-
         // PUT: api/Projects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProject(int id, [FromBody] ProjectDTO updatedProject)
         {
@@ -57,7 +69,6 @@ namespace CompanyManager.Controllers
             {
                 return BadRequest("Project data is required");
             }
-
             Project project = mapProject(updatedProject, id);
             if (!DataValidator.Validate(project, out var results))
             {
@@ -79,18 +90,21 @@ namespace CompanyManager.Controllers
                 var updated = await _projectService.UpdateProjectAsync(id, project);
                 if (updated == null)
                 {
-                    return NotFound($"Project with ID {id} not found.");
+                    return NotFound($"Project not found.");
                 }
                 return Ok(updated);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
         // POST: api/Projects
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Project>> PostProject([FromBody] ProjectDTO newProject)
         {
@@ -119,9 +133,13 @@ namespace CompanyManager.Controllers
                 var createdProject = await _projectService.AddProjectAsync(project);
                 return CreatedAtAction(nameof(GetProject), new { id = createdProject.Id_Project }, createdProject);
             }
-            catch (Exception ex)
+            catch(ArgumentException ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -129,12 +147,19 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var deleted = await _projectService.DeleteProjectAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound($"Project with ID {id} not found.");
+                var deleted = await _projectService.DeleteProjectAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Project with ID {id} not found.");
+                }
+                return Ok(deleted);
             }
-            return Ok(deleted);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         private Project mapProject(ProjectDTO projectDTO, int? id = null)

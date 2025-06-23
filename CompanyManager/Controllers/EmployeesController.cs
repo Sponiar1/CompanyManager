@@ -24,6 +24,10 @@ namespace CompanyManager.Controllers
             try
             {
                 var employees = await _employeeService.GetAllEmployeesAsync();
+                if (employees == null || !employees.Any())
+                {
+                    return NotFound("No employees found.");
+                }
                 return Ok(employees);
             }
             catch (Exception ex)

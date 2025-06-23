@@ -16,11 +16,25 @@ namespace CompanyManager.Services
 
         public async Task<IEnumerable<Division>> GetAllDivisionsAsync()
         {
-            return await _context.Divisions.ToListAsync();
+            try
+            {
+                return await _context.Divisions.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load divisions from database: " + ex.Message);
+            }
         }
         public async Task<Division> GetDivisionByIdAsync(int id)
         {
-            return await _context.Divisions.FindAsync(id);
+            try
+            {
+                return await _context.Divisions.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load division from database: " + ex.Message);
+            }
         }
         public async Task<Division> AddDivisionAsync(Division division)
         {
@@ -40,7 +54,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return division;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
@@ -68,7 +82,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return division;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
@@ -85,9 +99,16 @@ namespace CompanyManager.Services
             {
                 throw new InvalidOperationException("Division cannot be deleted because it has associated projects.");
             }
-            _context.Divisions.Remove(division);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Divisions.Remove(division);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }
