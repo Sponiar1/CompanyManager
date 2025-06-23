@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CompanyManager.Data;
+﻿using CompanyManager.Mappers;
+using CompanyManager.Mappers.Validator;
 using CompanyManager.Models;
 using CompanyManager.Services;
-using CompanyManager.Mappers;
-using CompanyManager.Mappers.Validator;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManager.Controllers
 {
@@ -28,7 +21,12 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
-            return await _departmentService.GetAllDepartmentsAsync();
+            var departments = await _departmentService.GetAllDepartmentsAsync();
+            if (departments == null || !departments.Any())
+            {
+                return NotFound("No departments found.");
+            }
+            return Ok(departments);
         }
 
         // GET: api/Departments/5
@@ -46,14 +44,14 @@ namespace CompanyManager.Controllers
         // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDepartment(int id, [FromBody]DepartmentDTO updatedDepartment)
+        public async Task<IActionResult> PutDepartment(int id, [FromBody] DepartmentDTO updatedDepartment)
         {
-            if(updatedDepartment == null)
+            if (updatedDepartment == null)
             {
                 return BadRequest("Department data is required");
             }
-            Department dep = await _departmentService.UpdateDepartmentAsync(id, updatedDepartment);
-            if(!DataValidator.Validate(dep, out var results))
+            Department dep = mapDepartment(updatedDepartment, id);
+            if (!DataValidator.Validate(dep, out var results))
             {
                 foreach (var error in results)
                 {
@@ -71,10 +69,7 @@ namespace CompanyManager.Controllers
             try
             {
                 var updated = await _departmentService.UpdateDepartmentAsync(id, dep);
-                if (updated == null)
-                {
-                    return NotFound($"Department with ID {id} not found.");
-                }
+                return Ok(updated);
             }
             catch (Exception ex)
             {
@@ -91,7 +86,7 @@ namespace CompanyManager.Controllers
             {
                 return BadRequest("Department data is required");
             }
-            Department dep = await _departmentService.AddDepartmentAsync(newDepartment);
+            Department dep = mapDepartment(newDepartment);
             if (!DataValidator.Validate(dep, out var results))
             {
                 foreach (var error in results)
@@ -122,12 +117,12 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-                var deleted = await _departmentService.DeleteDepartmentAsync(id);
-                if (!deleted)
-                {
-                    return NotFound($"Department with ID {id} not found.");
-                }
-                return Ok(deleted);
+            var deleted = await _departmentService.DeleteDepartmentAsync(id);
+            if (!deleted)
+            {
+                return NotFound($"Department with ID {id} not found.");
+            }
+            return Ok(deleted);
         }
 
         private Department mapDepartment(DepartmentDTO departmentDTO, int? id = null)
@@ -141,4 +136,5 @@ namespace CompanyManager.Controllers
                 Id_Boss = departmentDTO.Id_Boss
             };
         }
+    }
 }

@@ -3,7 +3,6 @@ using CompanyManager.Mappers.Validator;
 using CompanyManager.Models;
 using CompanyManager.Services;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CompanyManager.Controllers
 {
@@ -124,12 +123,19 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
-            var deleted = await _employeeService.DeleteEmployeeAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound($"Employee with ID {id} not found.");
+                var deleted = await _employeeService.DeleteEmployeeAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Employee was not found.");
+                }
+                return Ok(deleted);
             }
-            return Ok(deleted);
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private Employee mapEmployee(EmployeeDTO employeeDTO, int? id = null)

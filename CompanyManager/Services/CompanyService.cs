@@ -1,6 +1,7 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
@@ -27,6 +28,7 @@ namespace CompanyManager.Services
             {
                 throw new Exception("Database update failed: Employee (Boss) does not exist.");
             }
+            company.Boss = null;
             try
             {
                 _context.Companies.Add(company);
@@ -50,20 +52,32 @@ namespace CompanyManager.Services
             {
                 throw new Exception("Database update failed: Employee (Boss) does not exist.");
             }
-            _context.Entry(company).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return company;
+            try
+            {
+                _context.Entry(company).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return company;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
         public async Task<bool> DeleteCompanyAsync(int id)
         {
-            var company = await _context.Companies.FindAsync(id);
-            if (company != null)
+            var company = await _context.Companies.Include(c => c.Divisions)
+                                                  .FirstOrDefaultAsync(c => c.Id_Company == id);
+            if (company == null)
             {
-                _context.Companies.Remove(company);
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+            if(!company.Divisions.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Company is associated with division");
+            }
+            _context.Companies.Remove(company);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

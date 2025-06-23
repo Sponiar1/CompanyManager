@@ -1,6 +1,7 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
@@ -61,20 +62,32 @@ namespace CompanyManager.Services
             {
                 throw new Exception("Database update failed: Company does not exist.");
             }
-            _context.Entry(division).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return division;
+            try
+            {
+                _context.Entry(division).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return division;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
         public async Task<bool> DeleteDivisionAsync(int id)
         {
-            var division = await _context.Divisions.FindAsync(id);
-            if (division != null)
+            var division = await _context.Divisions.Include(c => c.Projects)
+                                              .FirstOrDefaultAsync(c => c.Id_Company == id);
+            if (division == null)
             {
-                _context.Divisions.Remove(division);
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+            if (!division.Projects.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Division cannot be deleted because it has associated projects.");
+            }
+            _context.Divisions.Remove(division);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

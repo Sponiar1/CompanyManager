@@ -72,14 +72,14 @@ namespace CompanyManager.Services
         }
         public async Task<bool> DeleteDepartmentAsync(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
+            var department = await _context.Departments.FirstOrDefaultAsync(d => d.Id_Department == id);
+            if(department == null)
             {
-                _context.Departments.Remove(department);
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+            _context.Departments.Remove(department);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

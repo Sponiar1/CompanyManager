@@ -1,6 +1,7 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
@@ -38,14 +39,25 @@ namespace CompanyManager.Services
         }
         public async Task<bool> DeleteEmployeeAsync(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
+            var employee = await _context.Employees.Include(e => e.Companies)
+                                                   .Include(e => e.Divisions)
+                                                   .Include(e => e.Departments)
+                                                   .Include(e => e.Projects)
+                                                   .FirstOrDefaultAsync(e => e.Id_Employee == id);
+            if (employee == null)
             {
-                _context.Employees.Remove(employee);
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+            if (!employee.Companies.IsNullOrEmpty() ||
+               !employee.Divisions.IsNullOrEmpty() ||
+               !employee.Departments.IsNullOrEmpty() ||
+               !employee.Projects.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Employee is manager of a district.");
+            }
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

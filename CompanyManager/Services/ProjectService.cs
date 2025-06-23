@@ -1,6 +1,7 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
@@ -72,14 +73,19 @@ namespace CompanyManager.Services
         }
         public async Task<bool> DeleteProjectAsync(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project != null)
+            var project = await _context.Projects.Include(p => p.Departments)
+                                                .FirstOrDefaultAsync(p => p.Id_Project == id);
+            if(project == null)
             {
-                _context.Projects.Remove(project);
-                await _context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            return false;
+            if (!project.Departments.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Project has associated departments and cannot be deleted.");
+            }
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
