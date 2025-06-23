@@ -21,25 +21,37 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
-            var companies = await _companyService.GetAllCompaniesAsync();
-            return Ok(companies);
+            try
+            {
+                var company = await _companyService.GetAllCompaniesAsync();
+                return Ok(company);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message );
+            }
         }
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(int id)
         {
-            var company = await _companyService.GetCompanyByIdAsync(id);
-            if (company == null)
+            try
             {
-                return NotFound($"Company with ID {id} not found.");
+                var company = await _companyService.GetCompanyByIdAsync(id);
+                if (company == null)
+                {
+                    return NotFound($"Company was not found.");
+                }
+                return Ok(company);
             }
-
-            return Ok(company);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT: api/Companies/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCompany(int id, [FromBody] CompanyDTO updatedCompany)
         {
@@ -68,16 +80,23 @@ namespace CompanyManager.Controllers
             try
             {
                 var company = await _companyService.UpdateCompanyAsync(id,com);
+                if(company == null)
+                {
+                    return NotFound($"Company does not exists.");
+                }
                 return Ok(company);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500,new { Message = ex.Message });
             }
         }
 
         // POST: api/Companies
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Company>> PostCompany([FromBody] CompanyDTO newCompany)
         {
@@ -106,11 +125,15 @@ namespace CompanyManager.Controllers
             try
             {
                 var company = await _companyService.AddCompanyAsync(com);
-                return Ok(company);
+                return CreatedAtAction(nameof(GetCompany), new { id = company.Id_Company }, company);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 
@@ -118,12 +141,21 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCompany(int id)
         {
-            var deleted = await _companyService.DeleteCompanyAsync(id);
-            if (!deleted)
-            {
-                return NotFound($"Company with ID {id} not found.");
+            try {
+                var deleted = await _companyService.DeleteCompanyAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Company does not exists.");
+                }
             }
-            return Ok(deleted);
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         private Company mapCompany(CompanyDTO company, int? id = null)

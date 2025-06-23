@@ -14,28 +14,56 @@ namespace CompanyManager.Services
         }
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
-            return await _context.Employees.ToListAsync();
+            try
+            {
+                return await _context.Employees.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load employees from database: " + ex.Message);
+            }
         }
         public async Task<Employee> GetEmployeeByIdAsync(int id)
         {
-            return await _context.Employees.FindAsync(id);
+            try
+            {
+                return await _context.Employees.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load employee from database: " + ex.Message);
+            }
         }
         public async Task<Employee> AddEmployeeAsync(Employee employee)
         {
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
-            return employee;
+            try
+            {
+                _context.Employees.Add(employee);
+                await _context.SaveChangesAsync();
+                return employee;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+            }
         }
         public async Task<Employee> UpdateEmployeeAsync(int id, Employee employee)
         {
-            var original = await _context.Employees.AsNoTracking().FirstAsync(e => e.Id_Employee == id);
-            if (original == null)
-            { 
-                return null;
+            try
+            {
+                var original = await _context.Employees.AsNoTracking().FirstAsync(e => e.Id_Employee == id);
+                if (original == null)
+                {
+                    return null;
+                }
+                _context.Entry(employee).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return employee;
             }
-            _context.Entry(employee).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return employee;
+            catch (Exception ex)
+            {
+                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+            }
         }
         public async Task<bool> DeleteEmployeeAsync(int id)
         {

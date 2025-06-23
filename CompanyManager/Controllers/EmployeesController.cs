@@ -21,24 +21,37 @@ namespace CompanyManager.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
-            return Ok(employees);
+            try
+            {
+                var employees = await _employeeService.GetAllEmployeesAsync();
+                return Ok(employees);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-            var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if(employee == null)
+            try
             {
-                return NotFound($"Employee with ID {id} not found.");
+                var employee = await _employeeService.GetEmployeeByIdAsync(id);
+                if (employee == null)
+                {
+                    return NotFound($"Employee was not found.");
+                }
+                return Ok(employee);
             }
-            return Ok(employee);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT: api/Employees/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmployee(int id, [FromBody] EmployeeDTO updatedEmployee)
         {
@@ -70,18 +83,21 @@ namespace CompanyManager.Controllers
                 var employee = await _employeeService.UpdateEmployeeAsync(id, emp);
                 if (employee == null)
                 {
-                    return NotFound($"Employee with ID {id} not found.");
+                    return NotFound($"Employee was not found.");
                 }
                 return Ok(employee);
             }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500,new { Message = ex.Message });
             }
         }
 
         // POST: api/Employees
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Employee>> PostEmployee([FromBody] EmployeeDTO newEmployee)
         {
@@ -111,11 +127,16 @@ namespace CompanyManager.Controllers
             try
             {
                 var employee = await _employeeService.AddEmployeeAsync(emp);
-                return Ok(employee);
+                return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id_Employee }, employee);
+
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return StatusCode(500,new { Message = ex.Message });
             }
         }
 
@@ -135,6 +156,10 @@ namespace CompanyManager.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
             }
         }
 

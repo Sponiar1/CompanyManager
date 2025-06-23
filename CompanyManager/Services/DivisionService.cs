@@ -76,7 +76,7 @@ namespace CompanyManager.Services
         public async Task<bool> DeleteDivisionAsync(int id)
         {
             var division = await _context.Divisions.Include(c => c.Projects)
-                                              .FirstOrDefaultAsync(c => c.Id_Company == id);
+                                              .FirstOrDefaultAsync(c => c.Id_Division == id);
             if (division == null)
             {
                 return false;

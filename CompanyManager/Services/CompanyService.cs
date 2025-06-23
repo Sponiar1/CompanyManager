@@ -15,18 +15,32 @@ namespace CompanyManager.Services
 
         public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
         {
-            return await _context.Companies.ToListAsync();
+            try
+            {
+                return await _context.Companies.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load companies from database: " + ex.Message);
+            }
         }
         public async Task<Company> GetCompanyByIdAsync(int id)
         {
-            return await _context.Companies.FindAsync(id);
+            try
+            {
+                return await _context.Companies.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load company from database: " + ex.Message);
+            }
         }
         public async Task<Company> AddCompanyAsync(Company company)
         {
             var boss = await _context.Employees.FindAsync(company.Id_Boss);
             if (boss == null)
             {
-                throw new Exception("Database update failed: Employee (Boss) does not exist.");
+                throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
             company.Boss = null;
             try
@@ -35,7 +49,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return company;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
@@ -50,7 +64,7 @@ namespace CompanyManager.Services
             var boss = await _context.Employees.FindAsync(company.Id_Boss);
             if (boss == null)
             {
-                throw new Exception("Database update failed: Employee (Boss) does not exist.");
+                throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
             try
             {
@@ -58,7 +72,7 @@ namespace CompanyManager.Services
                 await _context.SaveChangesAsync();
                 return company;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
             }
