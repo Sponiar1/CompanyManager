@@ -1,3 +1,6 @@
+CREATE DATABASE CompanyManager
+USE CompanyManager
+
 CREATE TABLE Zamestnanci(
 	ID int Identity(1,1) PRIMARY KEY,
 	Meno varchar(30) NOT NULL,

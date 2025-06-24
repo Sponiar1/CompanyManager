@@ -8,8 +8,7 @@
    - Voliteľne môžete nainštalovať aj **SQL Server Management Studio** pre pohodlnú prácu so skriptami.
 
 2. Po nainštalovaní:
-   - Vytvorte novú databázu.
-   - Spustite v nej skript `skript2.sql`.
+   - Spustite na servery skript `Tables.sql` (vytvorí databázu aj tabuľky)
 
 ---
 
