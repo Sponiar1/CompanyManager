@@ -1,25 +1,31 @@
 # CompanyManager
 
-## Nastavenie databázy 
-https://www.microsoft.com/en-us/sql-server/sql-server-downloads
+## Nastavenie databázy
 
-1. Inštalácia SQL Server Express 
-a) Pri inštalácií pre jednoduchosť nastavíme autentifikáciu na Windows Authentification.
-b) Je možné nainštalovať aj SQL Server Management Studio pre prácu so skriptami
+1. Stiahnite a nainštalujte **SQL Server Express**  
+   [SQL Server na stiahnutie](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+   - Pri inštalácii odporúčame zvoliť autentifikáciu typu **Windows Authentication** (pre jednoduchosť).
+   - Voliteľne môžete nainštalovať aj **SQL Server Management Studio** pre pohodlnú prácu so skriptami.
 
-2. Po nainštalovaní vytvoríme novú databázu a spustíme v nej skript2.sql
+2. Po nainštalovaní:
+   - Vytvorte novú databázu.
+   - Spustite v nej skript `skript2.sql`.
 
-## Pripojenie aplikácie na databázu
-1. Zmena ConnectionString
-V appsettings.json zmeníme nasledujúci String:
-'' "ConnectionStrings": {
-    "DefaultConnection": "Data Source=[1];Initial Catalog=[2]; Trusted_Connection=True; Encrypt=False;TrustServerCertificate=True;"
-}, ''
+---
+
+## Pripojenie aplikácie k databáze
+
+1. Otvorte súbor `appsettings.json`.
+2. Upravte sekciu ConnectionStrings nasledovne:
+
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Data Source=[SERVER_NAME];Initial Catalog=[DB_NAME];Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;"
+   }
 
 Kde:
-[1] zmeníme na názov servera 
-[2] zmeníme na názov databázy
-(Názov servera je možné získať skriptom skript1.sql)
+- [SERVER_NAME] – názov vášho SQL servera (môžete zistiť spustením skriptu skript1.sql)
+- [DB_NAME] – názov vytvorenej databázy
 
 ## Spustenie aplikácie
 Aplikácia funguje na porte 7214. Api sa dá testovať pomocou ScalaR: https://localhost:7214/scalar/v1
