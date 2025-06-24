@@ -1,9 +1,3 @@
-﻿--Umožniť manažovať (vytvárať/upravovať/mazať) max. 4-úrovňovú hierarchickú organizačnú štruktúru firmy: firma → divízie → projekty → oddelenia.
---Každý z uzlov organizačnej štruktúry bude pomenovaný názvom a kódom a bude mať svojho vedúceho 
---(firma – riaditeľ, divízia – vedúci divízie, projekt – vedúci projektu, 	oddelenie – vedúci oddelenia). Vedúci uzla je niektorý zo zamestnancov firmy.
-
---Umožniť pridávať, meniť a vymazávať zamestnancov.
---Pre zamestnanca sa bude evidovať minimálne titul, meno a priezvisko, telefón a e-mail.
 CREATE TABLE Zamestnanci(
 	ID int Identity(1,1) PRIMARY KEY,
 	Meno varchar(30) NOT NULL,
