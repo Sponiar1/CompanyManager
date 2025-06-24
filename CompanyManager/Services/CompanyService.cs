@@ -42,7 +42,6 @@ namespace CompanyManager.Services
             {
                 throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
-            //company.Boss = null;
             try
             {
                 _context.Companies.Add(company);
