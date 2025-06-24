@@ -10,6 +10,7 @@ using CompanyManager.Models;
 using CompanyManager.Services;
 using CompanyManager.Mappers;
 using CompanyManager.Mappers.Validator;
+using CompanyManager.Services.Templates;
 
 namespace CompanyManager.Controllers
 {
@@ -17,9 +18,9 @@ namespace CompanyManager.Controllers
     [ApiController]
     public class DivisionsController : ControllerBase
     {
-        private readonly DivisionService _divisionService;
+        private readonly IDivisionService _divisionService;
 
-        public DivisionsController(DivisionService divisionService)
+        public DivisionsController(IDivisionService divisionService)
         {
             _divisionService = divisionService;
         }
@@ -101,11 +102,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -141,11 +142,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500,ex.Message);
             }
         }
 

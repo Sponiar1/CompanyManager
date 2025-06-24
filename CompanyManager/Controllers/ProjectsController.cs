@@ -10,6 +10,7 @@ using CompanyManager.Models;
 using CompanyManager.Services;
 using CompanyManager.Mappers;
 using CompanyManager.Mappers.Validator;
+using CompanyManager.Services.Templates;
 
 namespace CompanyManager.Controllers
 {
@@ -17,9 +18,9 @@ namespace CompanyManager.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly ProjectService _projectService;
+        private readonly IProjectService _projectService;
 
-        public ProjectsController(ProjectService projectService)
+        public ProjectsController(IProjectService projectService)
         {
             _projectService = projectService;
         }
@@ -39,7 +40,7 @@ namespace CompanyManager.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500,ex.Message);
             }
         }
 
@@ -52,13 +53,13 @@ namespace CompanyManager.Controllers
                 var project = await _projectService.GetProjectByIdAsync(id);
                 if (project == null)
                 {
-                    return NotFound($"Project was not found.");
+                    return NotFound("Project was not found.");
                 }
                 return Ok(project);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, ex.Message);
             }
         }
         // PUT: api/Projects/5
@@ -96,11 +97,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message );
             }
         }
 
@@ -135,11 +136,11 @@ namespace CompanyManager.Controllers
             }
             catch(ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message );
             }
         }
 
@@ -147,18 +148,22 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid project ID provided.");
+            }
             try
             {
                 var deleted = await _projectService.DeleteProjectAsync(id);
                 if (!deleted)
                 {
-                    return NotFound($"Project with ID {id} not found.");
+                    return NotFound($"Project was not found.");
                 }
                 return Ok(deleted);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -167,7 +172,7 @@ namespace CompanyManager.Controllers
             return new Project
             {
                 Id_Project = id ?? 0,
-                Pro_Name = projectDTO.Com_Name,
+                Pro_Name = projectDTO.Pro_Name,
                 Code = projectDTO.Code,
                 Id_Division = projectDTO.Id_Division,
                 Id_Boss = projectDTO.Id_Boss

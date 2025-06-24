@@ -1,11 +1,12 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
-    public class ProjectService
+    public class ProjectService : IProjectService
     {
         private readonly CompanyContext _context;
         public ProjectService(CompanyContext context)
@@ -105,7 +106,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
     }

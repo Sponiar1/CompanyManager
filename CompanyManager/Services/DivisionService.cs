@@ -1,11 +1,12 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
-    public class DivisionService
+    public class DivisionService : IDivisionService
     {
         private readonly CompanyContext _context;
 
@@ -41,12 +42,12 @@ namespace CompanyManager.Services
             var boss = await _context.Employees.FindAsync(division.Id_Boss);
             if (boss == null)
             {
-                throw new Exception("Database update failed: Employee (Boss) does not exist.");
+                throw new ArgumentException("Database update failed: Employee (Boss) does not exist.");
             }
             var company = await _context.Companies.FindAsync(division.Id_Company);
             if (company == null)
             {
-                throw new Exception("Database update failed: Company does not exist.");
+                throw new ArgumentException("Database update failed: Company does not exist.");
             }
             try
             {
@@ -107,7 +108,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
     }

@@ -2,6 +2,7 @@
 using CompanyManager.Mappers.Validator;
 using CompanyManager.Models;
 using CompanyManager.Services;
+using CompanyManager.Services.Templates;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManager.Controllers
@@ -10,9 +11,9 @@ namespace CompanyManager.Controllers
     [ApiController]
     public class DepartmentsController : ControllerBase
     {
-        private readonly DepartmentService _departmentService;
+        private readonly IDepartmentService _departmentService;
 
-        public DepartmentsController(DepartmentService departmentService)
+        public DepartmentsController(IDepartmentService departmentService)
         {
             _departmentService = departmentService;
         }
@@ -45,7 +46,7 @@ namespace CompanyManager.Controllers
                 var department = await _departmentService.GetDepartmentByIdAsync(id);
                 if (department == null)
                 {
-                    return NotFound($"Department with ID {id} not found.");
+                    return NotFound("Department was not found.");
                 }
                 return Ok(department);
             }
@@ -56,7 +57,6 @@ namespace CompanyManager.Controllers
         }
 
         // PUT: api/Departments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDepartment(int id, [FromBody] DepartmentDTO updatedDepartment)
         {
@@ -91,16 +91,15 @@ namespace CompanyManager.Controllers
             }
             catch(ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500,ex.Message);
             }
         }
 
         // POST: api/Departments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Department>> PostDepartment([FromBody] DepartmentDTO newDepartment)
         {
@@ -131,11 +130,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -143,12 +142,16 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid department ID.");
+            }
             try
             {
                 var deleted = await _departmentService.DeleteDepartmentAsync(id);
                 if (!deleted)
                 {
-                    return NotFound($"Department was not found.");
+                    return NotFound("Department was not found.");
                 }
                 return Ok(deleted);
             }

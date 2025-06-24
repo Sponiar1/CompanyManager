@@ -2,6 +2,7 @@
 using CompanyManager.Mappers.Validator;
 using CompanyManager.Models;
 using CompanyManager.Services;
+using CompanyManager.Services.Templates;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManager.Controllers
@@ -10,9 +11,9 @@ namespace CompanyManager.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly EmployeeService _employeeService;
+        private readonly IEmployeeService _employeeService;
 
-        public EmployeesController(EmployeeService employeeService)
+        public EmployeesController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
         }
@@ -78,7 +79,6 @@ namespace CompanyManager.Controllers
                         ModelState.AddModelError(string.Empty, error.ErrorMessage);
                     }
                 }
-
                 return BadRequest(ModelState);
             }
 
@@ -87,7 +87,7 @@ namespace CompanyManager.Controllers
                 var employee = await _employeeService.UpdateEmployeeAsync(id, emp);
                 if (employee == null)
                 {
-                    return NotFound($"Employee was not found.");
+                    return NotFound("Employee was not found.");
                 }
                 return Ok(employee);
             }
@@ -97,7 +97,7 @@ namespace CompanyManager.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500,new { Message = ex.Message });
+                return StatusCode(500,ex.Message);
             }
         }
 
@@ -136,11 +136,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500,new { Message = ex.Message });
+                return StatusCode(500,ex.Message);
             }
         }
 
@@ -159,11 +159,11 @@ namespace CompanyManager.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(409, ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
 

@@ -1,11 +1,12 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
-    public class EmployeeService
+    public class EmployeeService : IEmployeeService
     {
         private readonly CompanyContext _context;
         public EmployeeService(CompanyContext context)
@@ -20,7 +21,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to load employees from database: " + ex.Message);
+                throw new Exception("Failed to load employees from database");
             }
         }
         public async Task<Employee> GetEmployeeByIdAsync(int id)
@@ -31,7 +32,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to load employee from database: " + ex.Message);
+                throw new Exception("Failed to load employee from database");
             }
         }
         public async Task<Employee> AddEmployeeAsync(Employee employee)
@@ -44,7 +45,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+                throw new Exception("Database update failed");
             }
         }
         public async Task<Employee> UpdateEmployeeAsync(int id, Employee employee)
@@ -62,7 +63,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+                throw new Exception("Database update failed");
             }
         }
         public async Task<bool> DeleteEmployeeAsync(int id)
@@ -81,7 +82,7 @@ namespace CompanyManager.Services
                !employee.Departments.IsNullOrEmpty() ||
                !employee.Projects.IsNullOrEmpty())
             {
-                throw new InvalidOperationException("Employee is manager of a district.");
+                throw new InvalidOperationException("Employee is manager of a unit");
             }
             try
             {
@@ -91,7 +92,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + (ex.InnerException?.Message ?? ex.Message));
+                throw new Exception("Database update failed");
             }
         }
     }

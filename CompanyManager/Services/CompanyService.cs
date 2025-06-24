@@ -1,11 +1,12 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompanyManager.Services
 {
-    public class CompanyService
+    public class CompanyService : ICompanyService
     {
         private readonly CompanyContext _context;
         public CompanyService(CompanyContext context)
@@ -21,7 +22,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to load companies from database: " + ex.Message);
+                throw new Exception("Failed to load companies from database");
             }
         }
         public async Task<Company> GetCompanyByIdAsync(int id)
@@ -32,7 +33,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to load company from database: " + ex.Message);
+                throw new Exception("Failed to load company from database");
             }
         }
         public async Task<Company> AddCompanyAsync(Company company)
@@ -50,7 +51,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
         public async Task<Company> UpdateCompanyAsync(int id, Company company)
@@ -73,7 +74,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
         public async Task<bool> DeleteCompanyAsync(int id)
@@ -96,7 +97,7 @@ namespace CompanyManager.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
     }

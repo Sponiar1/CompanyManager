@@ -1,10 +1,11 @@
 ﻿using CompanyManager.Data;
 using CompanyManager.Models;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompanyManager.Services
 {
-    public class DepartmentService
+    public class DepartmentService : IDepartmentService
     {
         private readonly CompanyContext _context;
         public DepartmentService(CompanyContext context)
@@ -13,11 +14,25 @@ namespace CompanyManager.Services
         }
         public async Task<IEnumerable<Department>> GetAllDepartmentsAsync()
         {
-            return await _context.Departments.ToListAsync();
+            try
+            {
+                return await _context.Departments.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load departments from database");
+            }
         }
         public async Task<Department> GetDepartmentByIdAsync(int id)
         {
-            return await _context.Departments.FindAsync(id);
+            try
+            {
+                return await _context.Departments.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to load department from database: " + ex.Message);
+            }
         }
         public async Task<Department> AddDepartmentAsync(Department department)
         {
@@ -67,7 +82,7 @@ namespace CompanyManager.Services
             }
             catch (DbUpdateException ex)
             {
-                throw new Exception("Database update failed: " + ex.InnerException?.Message ?? ex.Message);
+                throw new Exception("Database update failed");
             }
         }
         public async Task<bool> DeleteDepartmentAsync(int id)
@@ -77,9 +92,16 @@ namespace CompanyManager.Services
             {
                 return false;
             }
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Departments.Remove(department);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Database update failed");
+            }
         }
     }
 }

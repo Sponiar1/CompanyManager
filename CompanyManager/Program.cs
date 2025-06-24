@@ -1,5 +1,6 @@
 using CompanyManager.Data;
 using CompanyManager.Services;
+using CompanyManager.Services.Templates;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -14,11 +15,11 @@ builder.Services.AddControllers()
     });
 builder.Services.AddDbContext<CompanyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<EmployeeService>();
-builder.Services.AddScoped<CompanyService>();
-builder.Services.AddScoped<DivisionService>();
-builder.Services.AddScoped<DepartmentService>();
-builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IDivisionService, DivisionService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

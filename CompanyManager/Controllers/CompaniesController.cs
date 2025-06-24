@@ -2,6 +2,7 @@
 using CompanyManager.Mappers.Validator;
 using CompanyManager.Models;
 using CompanyManager.Services;
+using CompanyManager.Services.Templates;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManager.Controllers
@@ -10,9 +11,9 @@ namespace CompanyManager.Controllers
     [ApiController]
     public class CompaniesController : ControllerBase
     {
-        private readonly CompanyService _companyService;
+        private readonly ICompanyService _companyService;
 
-        public CompaniesController(CompanyService companyService)
+        public CompaniesController(ICompanyService companyService)
         {
             _companyService = companyService;
         }
@@ -92,11 +93,11 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -133,18 +134,21 @@ namespace CompanyManager.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = ex.Message });
+                return StatusCode(500, ex.Message );
             }
         }
-        //TODO
         // DELETE: api/Companies/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCompany(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid company ID.");
+            }
             try {
                 var deleted = await _companyService.DeleteCompanyAsync(id);
                 if (!deleted)
