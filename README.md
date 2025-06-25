@@ -8,7 +8,7 @@
 
 2. Po nainštalovaní:
    - Spustite na servery skript `Tables.sql` (vytvorí databázu aj tabuľky)
-
+   - Spustite `DummyData.sql` ak si želáte vložiť ukážkové dáta
 ---
 
 ## Pripojenie aplikácie k databáze
