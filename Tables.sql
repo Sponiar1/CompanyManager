@@ -1,42 +1,42 @@
 CREATE DATABASE CompanyManager
 USE CompanyManager
 
-CREATE TABLE Zamestnanci(
-	ID int Identity(1,1) PRIMARY KEY,
-	Meno varchar(30) NOT NULL,
-	Priezvisko varchar(30) NOT NULL,
-	Titul varchar(6),
-	Telefon varchar(12) NOT NULL,
+CREATE TABLE Employees(
+	Id_Employee int Identity(1,1) PRIMARY KEY,
+	First_Name varchar(30) NOT NULL,
+	Last_Name varchar(30) NOT NULL,
+	Title varchar(6),
+	Phone varchar(12) NOT NULL,
 	Email varchar(100) NOT NULL
 )
 
-CREATE TABLE Firma(
-	ID int Identity(1,1) PRIMARY KEY,
-	Nazov varchar (100) NOT NULL,
-	Kod varchar(10) NOT NULL,
-	Riaditel int FOREIGN KEY REFERENCES Zamestnanci(ID)
+CREATE TABLE Companies(
+	Id_Company int Identity(1,1) PRIMARY KEY,
+	Com_Name varchar (100) NOT NULL,
+	Code varchar(10) NOT NULL,
+	Id_Boss int NOT NULL FOREIGN KEY REFERENCES Employees(Id_Employee)
 )
 
-CREATE TABLE Divizia(
-	ID int Identity(1,1) PRIMARY KEY,
-	Nazov varchar (100) NOT NULL,
-	Kod varchar(10) NOT NULL,
-	Firma int FOREIGN KEY REFERENCES Firma(ID),
-	Veduci int FOREIGN KEY REFERENCES Zamestnanci(ID)
+CREATE TABLE Divisions(
+	Id_Division int Identity(1,1) PRIMARY KEY,
+	Div_Name varchar (100) NOT NULL,
+	Code varchar(10) NOT NULL,
+	Id_Company int NOT NULL FOREIGN KEY REFERENCES Companies(Id_Company),
+	Id_Boss int NOT NULL FOREIGN KEY REFERENCES Employees(Id_Employee)
 )
 
-CREATE TABLE Projekty(
-	ID int Identity(1,1) PRIMARY KEY,
-	Nazov varchar (100) NOT NULL,
-	Kod varchar(10) NOT NULL,
-	Divizia int FOREIGN KEY REFERENCES Divizia(ID),
-	Veduci int FOREIGN KEY REFERENCES Zamestnanci(ID)
+CREATE TABLE Projects(
+	Id_Project int Identity(1,1) PRIMARY KEY,
+	Pro_Name varchar (100) NOT NULL,
+	Code varchar(10) NOT NULL,
+	Id_Division int NOT NULL FOREIGN KEY REFERENCES Divisions(Id_Division),
+	Id_Boss int NOT NULL FOREIGN KEY REFERENCES Employees(Id_Employee)
 )
 
-CREATE TABLE Oddelenie(
-	ID int Identity(1,1) PRIMARY KEY,
-	Nazov varchar (100) NOT NULL,
-	Kod varchar(10) NOT NULL,
-	Projekt int FOREIGN KEY REFERENCES Projekty(ID),
-	Veduci int FOREIGN KEY REFERENCES Zamestnanci(ID)
+CREATE TABLE Departments(
+	Id_Department int Identity(1,1) PRIMARY KEY,
+	Dep_Name varchar (100) NOT NULL,
+	Code varchar(10) NOT NULL,
+	Id_Project int NOT NULL FOREIGN KEY REFERENCES Projects(Id_Project),
+	Id_Boss int NOT NULL FOREIGN KEY REFERENCES Employees(Id_Employee)
 );
