@@ -4,7 +4,6 @@
 
 1. Stiahnite a nainštalujte **SQL Server Express**  
    [SQL Server na stiahnutie](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
-   - Pri inštalácii odporúčame zvoliť autentifikáciu typu **Windows Authentication** (pre jednoduchosť).
    - Voliteľne môžete nainštalovať aj **SQL Server Management Studio** pre pohodlnú prácu so skriptami.
 
 2. Po nainštalovaní:
@@ -23,7 +22,7 @@
    }
 
 Kde:
-- [SERVER_NAME] – názov vášho SQL servera (môžete zistiť spustením skriptu skript1.sql)
+- [SERVER_NAME] – názov vášho SQL servera (pre default nastavenia inštalácie localhost\\SQLEXPRESS)
 - [DB_NAME] – názov vytvorenej databázy
 
 ## Spustenie aplikácie
