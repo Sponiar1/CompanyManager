@@ -24,6 +24,7 @@
 Kde:
 - [SERVER_NAME] – názov vášho SQL servera (pre default nastavenia inštalácie: localhost\\SQLEXPRESS)
 - [DB_NAME] – názov vytvorenej databázy
+- Pridajte `User ID` a `Password` ak ste ich zadávali pri vytvorení servera
 
 ## Spustenie aplikácie
-Aplikácia funguje na porte 7214. Api sa dá testovať pomocou ScalaR: https://localhost:7214/scalar/v1
+- Aplikácia funguje na porte 7214. Api sa dá testovať pomocou ScalaR: https://localhost:7214/scalar/v1 (default redirect pri spustení projektu)
