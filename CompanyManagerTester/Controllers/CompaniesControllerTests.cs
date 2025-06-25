@@ -57,6 +57,7 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal("Database error", statusCodeResult.Value);
         }
         [Fact]
         public async void GetCompanySuccess()
@@ -67,7 +68,6 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<Company>(okResult.Value);
-            Assert.NotNull(result);
             Assert.Equal("Test Company", returnValue.Com_Name);
         }
         [Fact]
@@ -87,6 +87,7 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal("Database error", statusCodeResult.Value);
         }
         [Fact]
         public async void PutCompanySuccess()
@@ -177,7 +178,7 @@ namespace CompanyManagerTester.Controllers
             var result = await _controller.DeleteCompany(1);
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal(409, statusCodeResult.StatusCode);
             Assert.Equal("Company is associated with division", statusCodeResult.Value);
         }
         private Company CreateTestCompany()

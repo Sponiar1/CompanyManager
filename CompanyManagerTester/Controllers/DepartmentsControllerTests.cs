@@ -50,6 +50,16 @@ namespace CompanyManagerTester.Controllers
             Assert.Equal("No departments found.", notFoundResult.Value);
         }
         [Fact]
+        public async void GetDepartmentsException()
+        {
+            _departmentServiceMock.Setup(s => s.GetAllDepartmentsAsync()).Throws(new Exception("Database error"));
+            var result = await _controller.GetDepartments();
+            // Assert
+            var statusCodeResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal("Database error", statusCodeResult.Value);
+        }
+        [Fact]
         public async void GetDepartmentByIdSuccess()
         {
             _departmentServiceMock.Setup(s => s.GetDepartmentByIdAsync(1)).ReturnsAsync(CreateDepartment());
@@ -57,6 +67,16 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<Department>(okResult.Value);
+            Assert.Equal("Test Department", returnValue.Dep_Name);
+        }
+        [Fact]
+        public async void GetDepartmentByIdNotFound()
+        {
+            _departmentServiceMock.Setup(s => s.GetDepartmentByIdAsync(1)).ReturnsAsync((Department)null);
+            var result = await _controller.GetDepartment(1);
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+            Assert.Equal("Department was not found.", notFoundResult.Value);
         }
         [Fact]
         public async void GetDepartmentByIdException()
@@ -115,6 +135,17 @@ namespace CompanyManagerTester.Controllers
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             var error = Assert.IsType<SerializableError>(badRequestResult.Value);
             Assert.Equal("Department code is required.", ((string[])error["Code"])[0]);
+        }
+        [Fact]
+        public async void UpdateDepartmentNameTooLong()
+        {
+            var departmentDTO = CreateDepartmentDTO();
+            departmentDTO.Dep_Name = new string('a', 256);
+            var result = await _controller.PutDepartment(1, departmentDTO);
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var error = Assert.IsType<SerializableError>(badRequestResult.Value);
+            Assert.Equal("Department name cannot exceed 100 characters.", ((string[])error["Dep_Name"])[0]);
         }
         [Fact]
         public async void DeleteDepartmentSuccess()

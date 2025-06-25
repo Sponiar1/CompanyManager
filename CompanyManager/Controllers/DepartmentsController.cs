@@ -75,7 +75,7 @@ namespace CompanyManager.Controllers
                     }
                     if (!error.MemberNames.Any())
                     {
-                        ModelState.AddModelError("", error.ErrorMessage);
+                        ModelState.AddModelError(string.Empty, error.ErrorMessage);
                     }
                 }
                 return BadRequest(ModelState);
@@ -85,7 +85,7 @@ namespace CompanyManager.Controllers
                 var updated = await _departmentService.UpdateDepartmentAsync(id, dep);
                 if(updated == null)
                 {
-                    return NotFound($"Department was not found.");
+                    return NotFound("Department was not found.");
                 }
                 return Ok(updated);
             }

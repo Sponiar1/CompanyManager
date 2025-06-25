@@ -157,6 +157,10 @@ namespace CompanyManager.Controllers
                 }
                 return Ok(deleted);
             }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(409, ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

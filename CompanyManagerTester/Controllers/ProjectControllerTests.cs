@@ -50,6 +50,16 @@ namespace CompanyManagerTester.Controllers
             Assert.Equal("No projects found.", notFoundResult.Value);
         }
         [Fact]
+        public async void GetProjectsException()
+        {
+            _projectServiceMock.Setup(s => s.GetAllProjectsAsync()).Throws(new Exception("Database error"));
+            var result = await _controller.GetProjects();
+            // Assert
+            var statusCodeResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal("Database error", statusCodeResult.Value);
+        }
+        [Fact]
         public async void GetProjectByIdSuccess()
         {
             var project = CreateProject();
@@ -58,7 +68,6 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<Project>(okResult.Value);
-            Assert.NotNull(result);
             Assert.Equal("Test Project", returnValue.Pro_Name);
         }
         [Fact]
@@ -69,6 +78,16 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             Assert.Equal("Project was not found.", notFoundResult.Value);
+        }
+        [Fact]
+        public async void GetProjectByIdException()
+        {
+            _projectServiceMock.Setup(s => s.GetProjectByIdAsync(1)).Throws(new Exception("Database error"));
+            var result = await _controller.GetProject(1);
+            // Assert
+            var statusCodeResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+            Assert.Equal("Database error", statusCodeResult.Value);
         }
         [Fact]
         public async void CreateProjectSuccess()

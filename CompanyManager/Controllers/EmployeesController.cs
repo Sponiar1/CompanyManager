@@ -148,6 +148,10 @@ namespace CompanyManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid company ID.");
+            }
             try
             {
                 var deleted = await _employeeService.DeleteEmployeeAsync(id);

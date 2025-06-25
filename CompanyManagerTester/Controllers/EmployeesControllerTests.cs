@@ -43,10 +43,7 @@ namespace CompanyManagerTester.Controllers
                 }
             };
 
-            _employeeServiceMock
-                .Setup(s => s.GetAllEmployeesAsync())
-                .ReturnsAsync(employees);
-
+            _employeeServiceMock.Setup(s => s.GetAllEmployeesAsync()).ReturnsAsync(employees);
             var result = await _controller.GetEmployees();
 
             // Assert
@@ -77,23 +74,23 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(500, objectResult.StatusCode);
+            Assert.Equal("Failed to load employee from database", objectResult.Value);
         }
         [Fact]
         public async void GetEmployeeSuccess()
         {
             _employeeServiceMock.Setup(s=>s.GetEmployeeByIdAsync(1))
-                .ReturnsAsync(CreateDummy);
+                .ReturnsAsync(CreateDummy());
             var result = await _controller.GetEmployee(1);
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<Employee>(okResult.Value);
-            Assert.Equal(1, returnValue.Id_Employee);
+            Assert.Equal("John", returnValue.First_Name);
         }
         [Fact]
         public async void GetEmployeeNotFound()
         {
-            _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1))
-                .ReturnsAsync((Employee)null);
+            _employeeServiceMock.Setup(s => s.GetEmployeeByIdAsync(1)).ReturnsAsync((Employee)null);
             var result = await _controller.GetEmployee(1);
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -108,6 +105,7 @@ namespace CompanyManagerTester.Controllers
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(500, objectResult.StatusCode);
+            Assert.Equal("Failed to load employee from database", objectResult.Value);
         }
         [Fact]
         public async void PutEmployeeSuccess()

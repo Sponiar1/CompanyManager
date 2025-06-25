@@ -57,7 +57,7 @@ namespace CompanyManager.Controllers
                 var division = await _divisionService.GetDivisionByIdAsync(id);
                 if (division == null)
                 {
-                    return NotFound($"Division was not found.");
+                    return NotFound("Division was not found.");
                 }
                 return Ok(division);
             }
