@@ -22,7 +22,7 @@
    }
 
 Kde:
-- [SERVER_NAME] – názov vášho SQL servera (pre default nastavenia inštalácie localhost\\SQLEXPRESS)
+- [SERVER_NAME] – názov vášho SQL servera (pre default nastavenia inštalácie: localhost\\SQLEXPRESS)
 - [DB_NAME] – názov vytvorenej databázy
 
 ## Spustenie aplikácie
